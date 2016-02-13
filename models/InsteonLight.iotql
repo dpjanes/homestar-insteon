@@ -1,9 +1,9 @@
 --
---  compile to JSON with 'iotql-model Insteon.iotql'
+--  compile to JSON with 'iotql-model InsteonLight.iotql'
 --
-CREATE MODEL Insteon WITH
-    schema:name = "Insteon",
-    schema:description = "Insteon"
+CREATE MODEL InsteonLight WITH
+    schema:name = "Insteon Light",
+    schema:description = "Insteon Light"
 ATTRIBUTE on WITH
     schema:name = "on",
     iot:purpose = iot-purpose:on,

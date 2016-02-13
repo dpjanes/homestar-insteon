@@ -24,7 +24,7 @@
 
 exports.Bridge = require('./InsteonBridge').Bridge;
 exports.bindings = [
-    require('./models/Insteon').binding,
+    require('./models/InsteonLight').binding,
 ];
 
 exports.iotdb = require("iotdb");

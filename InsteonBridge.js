@@ -25,7 +25,7 @@
 var iotdb = require('iotdb');
 var _ = iotdb._;
 
-var insteon = require('insteon-api');
+var InsteonAPI = require('insteon-api');
 
 var logger = iotdb.logger({
     name: 'homestar-insteon',
@@ -43,9 +43,19 @@ var InsteonBridge = function (initd, native) {
 
     self.initd = _.defaults(initd,
         iotdb.keystore().get("bridges/InsteonBridge/initd"), {
+            key: null,
+            secret: null,
             poll: 30
         }
     );
+
+    if (!self.initd.key) {
+        throw new Error("InsteonBridge: expected a key or bridges/InsteonBridge/initd/key");
+    }
+    if (!self.initd.secret) {
+        throw new Error("InsteonBridge: expected a secret or bridges/InsteonBridge/initd/secret");
+    }
+
     self.native = native;   // the thing that does the work - keep this name
 
     if (self.native) {
@@ -94,8 +104,19 @@ InsteonBridge.prototype.connect = function (connectd) {
 
     self._validate_connect(connectd);
 
-    self._setup_polling();
-    self.pull();
+    /**
+     *  TD: need to make a version that if an error is returned
+     *  it will try again in 30 seconds or whatever
+     */
+    self._insteon(function(error, native) {
+        if (error) {
+            logger.error({
+                error: _.error.message(error),
+            }, "could not connect to Insteon API");
+            return;
+        }
+    });
+    
 };
 
 InsteonBridge.prototype._setup_polling = function () {
@@ -246,3 +267,67 @@ InsteonBridge.prototype._insteon = function () {
  *  API
  */
 exports.Bridge = InsteonBridge;
+
+var __insteond = {};
+var __pendingsd = {};
+
+/**
+ *  This returns a connection object per ( host, port, tunnel_host, tunnel_port )
+ *  tuple, ensuring the correct connection object exists and is connected.
+ *  It calls back with the connection object
+ *
+ *  The code is complicated because we have to keep callbacks stored 
+ *  in '__pendingsd' until the connection is actually made
+ */
+InsteonBridge.prototype._insteon = function (callback) {
+    var self = this;
+
+    var key = self.initd.key;
+
+    var insteon = __insteond[key];
+    if (insteon === undefined) {
+        var connect = false;
+
+        var pendings = __pendingsd[key];
+        if (pendings === undefined) {
+            pendings = [];
+            __pendingsd[key] = pendings;
+            connect = true;
+        }
+
+        pendings.push(callback);
+
+        if (connect) {
+            logger.info({
+                method: "_insteon",
+                npending: pendings.length,
+                key: self.initd.key,
+            }, "connecting to Insteon");
+
+            insteon = new InsteonAPI({
+                key: self.initd.key,
+                secret: self.initd.secret,
+            });
+            insteon.on('error', function(error) {
+                __insteond[key] = insteon;
+
+                pendings.map(function (pending) {
+                    pending(error, null);
+                });
+
+                delete __pendingsd[key];
+            });
+            insteon.on('connect', function() {
+                __insteond[key] = insteon;
+
+                pendings.map(function (pending) {
+                    pending(null, insteon);
+                });
+
+                delete __pendingsd[key];
+            });
+        }
+    } else {
+        callback(null, insteon);
+    }
+};

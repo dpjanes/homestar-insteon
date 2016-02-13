@@ -10,5 +10,5 @@ var iotdb = require("iotdb");
 
 exports.binding = {
     bridge: require('../InsteonBridge').Bridge,
-    model: require('./Insteon.json'),
+    model: require('./insteon-light.json'),
 };
