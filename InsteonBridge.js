@@ -25,7 +25,7 @@
 var iotdb = require('iotdb');
 var _ = iotdb._;
 
-var insteon = require('insteon');
+var insteon = require('insteon-api');
 
 var logger = iotdb.logger({
     name: 'homestar-insteon',
