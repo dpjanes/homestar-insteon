@@ -26,8 +26,3 @@ exports.Bridge = require('./InsteonBridge').Bridge;
 exports.bindings = [
     require('./models/InsteonLight').binding,
 ];
-
-exports.iotdb = require("iotdb");
-exports.wrap = function(name, initd) {
-    return exports.iotdb.make_wrap(name, exports.bindings, initd);
-};
