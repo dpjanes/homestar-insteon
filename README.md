@@ -13,33 +13,16 @@ Then:
 
     $ npm install homestar-insteon
 
-# Testing
+# Use
 
-## IOTDB
+Turn on something
 
-Turn on Insteon.
+	const iotdb = require('iotdb')
+    iotdb.use("homestar-insteon")
 
-	$ node
-	>>> iotdb = require('iotdb')
-	>>> things = iotdb.connect("Insteon")
-	>>> things.set(":on", true);
+	const things = iotdb.connect("InsteonSomething")
+	things.set(":on", true);
 	
-## [IoTQL](https://github.com/dpjanes/iotdb-iotql)
-
-Change to HDMI1 
-
-	$ homestar install iotql
-	$ homestar iotql
-	> SET state:on = true WHERE meta:model-id = "insteon";
-
-## Home☆Star
-
-Do:
-
-	$ homestar runner browser=1
-	
-You may have to refresh the page, as it may take a little while for your Things to be discovered. If your TV is not on it won't show up.
-
 # Models
 ## Insteon
 
