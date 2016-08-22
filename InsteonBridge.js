@@ -50,10 +50,10 @@ var InsteonBridge = function (initd, native) {
     );
 
     if (!self.initd.key) {
-        throw new Error("InsteonBridge: expected a key or bridges/InsteonBridge/initd/key");
+        throw new Error("InsteonBridge: expected a key or /bridges/InsteonBridge/initd/key");
     }
     if (!self.initd.secret) {
-        throw new Error("InsteonBridge: expected a secret or bridges/InsteonBridge/initd/secret");
+        throw new Error("InsteonBridge: expected a secret or /bridges/InsteonBridge/initd/secret");
     }
 
     self.native = native;   // the thing that does the work - keep this name
@@ -87,9 +87,21 @@ InsteonBridge.prototype.discover = function () {
      *  The first argument should be self.initd, the second
      *  the thing that you do work with
      */
+    /*
     var s = self._insteon();
     s.on('something', function (native) {
         self.discovered(new InsteonBridge(self.initd, native));
+    });
+     */
+    self._insteon(function(error, native) {
+        if (error) {
+            logger.error({
+                error: _.error.message(error),
+            }, "could not connect to Insteon API");
+            return;
+        }
+
+        console.log("GOT ONE");
     });
 };
 
@@ -108,14 +120,6 @@ InsteonBridge.prototype.connect = function (connectd) {
      *  TD: need to make a version that if an error is returned
      *  it will try again in 30 seconds or whatever
      */
-    self._insteon(function(error, native) {
-        if (error) {
-            logger.error({
-                error: _.error.message(error),
-            }, "could not connect to Insteon API");
-            return;
-        }
-    });
     
 };
 
@@ -307,8 +311,11 @@ InsteonBridge.prototype._insteon = function (callback) {
             insteon = new InsteonAPI({
                 key: self.initd.key,
                 secret: self.initd.secret,
+                accessToken: "CDF6793641680336E821DB9B1DC2174F",
             });
+            console.log("HER:XXX.1");
             insteon.on('error', function(error) {
+                console.log("HERE:XXX.4")
                 __insteond[key] = insteon;
 
                 pendings.map(function (pending) {
@@ -319,12 +326,17 @@ InsteonBridge.prototype._insteon = function (callback) {
             });
             insteon.on('connect', function() {
                 __insteond[key] = insteon;
+                console.log("HERE:XXX.3")
 
                 pendings.map(function (pending) {
                     pending(null, insteon);
                 });
 
                 delete __pendingsd[key];
+            });
+            console.log("HER:XXX.2");
+            insteon.connect({
+                accessToken: "CDF6793641680336E821DB9B1DC2174F",
             });
         }
     } else {

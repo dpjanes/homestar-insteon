@@ -1,7 +1,9 @@
 # homestar-insteon
-IOTDB / Home☆Star Module for [Insteon]().
+[IOTDB](https://github.com/dpjanes/node-iotdb) Bridge for [Insteon]().
 
 <img src="https://raw.githubusercontent.com/dpjanes/iotdb-homestar/master/docs/HomeStar.png" align="right" />
+
+NOT FINISHED
 
 # Installation
 
