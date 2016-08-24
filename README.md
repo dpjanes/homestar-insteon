@@ -3,7 +3,12 @@
 
 <img src="https://raw.githubusercontent.com/dpjanes/iotdb-homestar/master/docs/HomeStar.png" align="right" />
 
+
+# About
+
 NOT FINISHED
+
+* [Read about Bridges](https://github.com/dpjanes/node-iotdb/blob/master/docs/bridges.md)
 
 # Installation
 
