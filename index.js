@@ -26,3 +26,5 @@ exports.Bridge = require('./InsteonBridge').Bridge;
 exports.bindings = [
     require('./models/InsteonLight').binding,
 ];
+
+exports.module_folder = __dirname;
