@@ -65,10 +65,6 @@ var InsteonBridge = function (initd, native) {
 
 InsteonBridge.prototype = new iotdb.Bridge();
 
-InsteonBridge.prototype.name = function () {
-    return "InsteonBridge";
-};
-
 /* --- lifecycle --- */
 
 /**
